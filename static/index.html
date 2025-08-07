@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Fraud Detection System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Login/Signup Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <div class="auth-container">
+                <div class="auth-header">
+                    <h2 id="authTitle">Sign In</h2>
+                    <span class="close">&times;</span>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginUsername">Username</label>
+                        <input type="text" id="loginUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign In</button>
+                </form>
+                
+                <!-- Signup Form -->
+                <form id="signupForm" class="auth-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="signupUsername">Username</label>
+                        <input type="text" id="signupUsername" required minlength="3" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </form>
+                
+                <div class="auth-toggle">
+                    <p id="authToggleText">Don't have an account? <a href="#" id="authToggleLink">Sign up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <h1>Fraud Detection System</h1>
+                </div>
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <span id="username"></span>
+                    <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                </div>
+                <button id="loginBtn" class="btn btn-primary">Sign In</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent" style="display: none;">
+        <div class="container">
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <button class="tab-btn active" data-tab="transaction">New Transaction</button>
+                <button class="tab-btn" data-tab="history">Transaction History</button>
+                <button class="tab-btn" data-tab="flagged">Flagged Transactions</button>
+                <button class="tab-btn" data-tab="blacklist">Blacklist</button>
+            </div>
+
+            <!-- Transaction Form -->
+            <div id="transactionTab" class="tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-credit-card"></i> Check Transaction for Fraud</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="transactionForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="transactionId">Transaction ID</label>
+                                    <input type="text" id="transactionId" required placeholder="TXN123456789">
+                                </div>
+                                <div class="form-group">
+                                    <label for="timestamp">Timestamp</label>
+                                    <input type="datetime-local" id="timestamp" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="amount">Amount</label>
+                                    <input type="number" id="amount" required min="0.01" step="0.01" placeholder="1000.00">
+                                </div>
+                                <div class="form-group">
+                                    <label for="currency">Currency</label>
+                                    <select id="currency" required>
+                                        <option value="USD">USD</option>
+                                        <option value="EUR">EUR</option>
+                                        <option value="GBP">GBP</option>
+                                        <option value="INR">INR</option>
+                                        <option value="JPY">JPY</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="location">Location</label>
+                                    <input type="text" id="location" required placeholder="Chennai">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cardType">Card Type</label>
+                                    <select id="cardType" required>
+                                        <option value="">Select Card Type</option>
+                                        <option value="Visa">Visa</option>
+                                        <option value="MasterCard">MasterCard</option>
+                                        <option value="American Express">American Express</option>
+                                        <option value="Discover">Discover</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="recipientAccount">Recipient Account Number</label>
+                                <input type="text" id="recipientAccount" required placeholder="ACC123456789">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-large">
+                                <i class="fas fa-search"></i> Check for Fraud
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Transaction Result -->
+                <div id="transactionResult" class="card" style="display: none;">
+                    <div class="card-header">
+                        <h3>Transaction Analysis Result</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="resultContent"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction History -->
+            <div id="historyTab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-history"></i> All Transactions</h3>
+                        <button id="refreshHistory" class="btn btn-secondary">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="transactionHistory" class="table-container">
+                            <div class="loading">Loading transactions...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flagged Transactions -->
+            <div id="flaggedTab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Flagged Transactions</h3>
+                        <button id="refreshFlagged" class="btn btn-secondary">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="flaggedTransactions" class="table-container">
+                            <div class="loading">Loading flagged transactions...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blacklist -->
+            <div id="blacklistTab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-ban"></i> Blacklist</h3>
+                        <button id="refreshBlacklist" class="btn btn-secondary">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="blacklistContent" class="table-container">
+                            <div class="loading">Loading blacklist...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
